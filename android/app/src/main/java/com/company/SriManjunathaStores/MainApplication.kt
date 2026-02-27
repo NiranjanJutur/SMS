@@ -1,4 +1,4 @@
-package com.familyos
+package com.company.SriManjunathaStores
 
 import android.app.Application
 import com.facebook.react.PackageList

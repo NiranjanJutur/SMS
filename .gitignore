@@ -73,3 +73,15 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Firebase/Google services
+google-services.json
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Logs
+*.txt
+*.log
+
+# Editor
+.vscode/

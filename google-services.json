@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "927124685756",
+    "project_id": "smst-a0c47",
+    "storage_bucket": "smst-a0c47.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:927124685756:android:d2f63023713af9037361b9",
+        "android_client_info": {
+          "package_name": "com.company.SriManjunathaStores"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHmZ69x-izkI05HXpF8fe-IBPGyBS9aBw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
