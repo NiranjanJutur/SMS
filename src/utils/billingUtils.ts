@@ -14,43 +14,61 @@ const CUSTOMER_TYPE_MAP: Record<string, CustomerTypesKey> = {
     vip: 'VIP_REGULAR',
 };
 
-export const calculateItemTotal = (product: Product, quantity: number, customerType: CustomerType) => {
-    const { normalizedQty } = normalizeQuantity(quantity, product.unit);
+/**
+ * Calculates the total for a single cart item.
+ * Handles unit normalization (e.g. 500g on a kg-priced product → 0.5 × price)
+ */
+export const calculateItemTotal = (
+    product: Product,
+    quantity: number,
+    customerType: CustomerType,
+    inputUnit?: string,
+) => {
+    // Normalize quantity to product's base unit to prevent 1000x pricing errors
+    const unit = inputUnit ?? product.unit;
+    const { normalizedQty } = normalizeQuantity(quantity, unit, product.unit);
+
     const basePrice = product.price;
     const key = CUSTOMER_TYPE_MAP[customerType];
     const discountFactor = key ? CUSTOMER_TYPES[key].pricing : 1.0;
     const discountedPrice = basePrice * discountFactor;
-
     const gstAmount = (discountedPrice * product.gstPercent) / 100;
-    const totalPrice = discountedPrice + gstAmount;
+    const unitPriceWithGst = discountedPrice + gstAmount;
 
     return {
+        normalizedQty,
         discountedPrice,
         gstAmount,
-        totalPrice: totalPrice * quantity,
-        unitPriceWithGst: totalPrice
+        unitPriceWithGst,
+        totalPrice: unitPriceWithGst * normalizedQty,
     };
 };
 
-export const calculateCartTotals = (items: { product: Product, quantity: number }[], customerType: CustomerType) => {
+/**
+ * Calculates totals for the entire cart.
+ */
+export const calculateCartTotals = (
+    items: { product: Product; quantity: number }[],
+    customerType: CustomerType,
+) => {
     let subtotal = 0;
     let totalGst = 0;
     let grandTotal = 0;
 
     items.forEach(item => {
-        const { discountedPrice, gstAmount } = calculateItemTotal(item.product, item.quantity, customerType);
-        subtotal += discountedPrice * item.quantity;
-        totalGst += gstAmount * item.quantity;
-        grandTotal += (discountedPrice + gstAmount) * item.quantity;
+        const { normalizedQty, discountedPrice, gstAmount } = calculateItemTotal(
+            item.product,
+            item.quantity,
+            customerType,
+        );
+        subtotal += discountedPrice * normalizedQty;
+        totalGst += gstAmount * normalizedQty;
+        grandTotal += (discountedPrice + gstAmount) * normalizedQty;
     });
 
-    return {
-        subtotal,
-        totalGst,
-        grandTotal
-    };
+    return { subtotal, totalGst, grandTotal };
 };
 
-export const formatCurrency = (amount: number) => {
-    return `₹${amount.toFixed(2)}`;
+export const formatCurrency = (amount: number): string => {
+    return `\u20b9${amount.toFixed(2)}`;
 };
