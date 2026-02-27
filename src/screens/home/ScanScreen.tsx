@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 import { COLORS, TYPOGRAPHY, SPACING, RADIUS } from '../../config/theme';
 import { useScanner } from '../../services/ai/scannerService';
 import { Product } from '../../models/Product';
@@ -10,11 +11,19 @@ interface ScanScreenProps {
 }
 
 const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
+    const device = useCameraDevice('back');
+    const { hasPermission, requestPermission } = useCameraPermission();
     const { scanProduct, isScanning, lastResult } = useScanner();
 
     const handleScan = async () => {
+        if (!hasPermission) {
+            await requestPermission();
+            return;
+        }
+        // In a real implementation with product hardware:
+        // const photo = await camera.current.takePhoto();
+        // const result = await scanProduct(photo.path);
         const result = await scanProduct('mock-uri');
-        // In a real app, this would be called after confirming the AI result
     };
 
     const confirmProduct = () => {

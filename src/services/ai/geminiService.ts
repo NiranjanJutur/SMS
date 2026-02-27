@@ -15,7 +15,10 @@ export const recognizeProduct = async (imageBase64: string): Promise<Partial<Pro
     }
 
     try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({
+            model: 'gemini-1.5-flash',
+            generationConfig: { responseMimeType: 'application/json' }
+        });
         const prompt = `Identify this grocery product. Return JSON with name, category, price_est, and unit.
         Format: {"name": "Product Name", "category": "Category", "price": 0, "unit": "kg/pcs"}`;
 
@@ -25,10 +28,7 @@ export const recognizeProduct = async (imageBase64: string): Promise<Partial<Pro
         ]);
 
         const text = result.response.text();
-        const jsonMatch = text.match(/\{.*\}/s);
-        if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-        }
+        return JSON.parse(text);
     } catch (error) {
         console.error('Gemini Product Recognition Error:', error);
     }
@@ -45,7 +45,10 @@ export const extractSlipData = async (imageBase64: string): Promise<SlipOCRResul
     }
 
     try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({
+            model: 'gemini-1.5-flash',
+            generationConfig: { responseMimeType: 'application/json' }
+        });
         const prompt = `Transcribe this handwritten grocery list into structured JSON. 
         Extract customer name, phone, and items with quantities.
         Format: {"name": "Customer Name", "phone": "Phone", "items": [{"name": "Item", "qty": 0}]}`;
@@ -56,10 +59,7 @@ export const extractSlipData = async (imageBase64: string): Promise<SlipOCRResul
         ]);
 
         const text = result.response.text();
-        const jsonMatch = text.match(/\{.*\}/s);
-        if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-        }
+        return JSON.parse(text);
     } catch (error) {
         console.error('Gemini Slip Extraction Error:', error);
     }
@@ -75,7 +75,10 @@ export const parseCommandAI = async (command: string): Promise<any | null> => {
     }
 
     try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({
+            model: 'gemini-1.5-flash',
+            generationConfig: { responseMimeType: 'application/json' }
+        });
         const prompt = `Convert this voice command into a structured JSON for a grocery app.
         Example: "Add 2kg rice" -> {"action": "ADD", "item": "Rice", "qty": 2, "unit": "kg"}
         Example: "Restock 50 packets of milk" -> {"action": "RESTOCK", "item": "Milk", "qty": 50, "unit": "pcs"}
@@ -83,10 +86,7 @@ export const parseCommandAI = async (command: string): Promise<any | null> => {
 
         const result = await model.generateContent(prompt);
         const text = result.response.text();
-        const jsonMatch = text.match(/\{.*\}/s);
-        if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-        }
+        return JSON.parse(text);
     } catch (error) {
         console.error('Gemini Command Parsing Error:', error);
     }

@@ -1,6 +1,7 @@
 import { Product } from '../models/Product';
 import { CustomerType } from '../models/Customer';
 import { CUSTOMER_TYPES } from '../config/constants';
+import { normalizeQuantity } from './conversion';
 
 type CustomerTypesKey = keyof typeof CUSTOMER_TYPES;
 
@@ -14,6 +15,7 @@ const CUSTOMER_TYPE_MAP: Record<string, CustomerTypesKey> = {
 };
 
 export const calculateItemTotal = (product: Product, quantity: number, customerType: CustomerType) => {
+    const { normalizedQty } = normalizeQuantity(quantity, product.unit);
     const basePrice = product.price;
     const key = CUSTOMER_TYPE_MAP[customerType];
     const discountFactor = key ? CUSTOMER_TYPES[key].pricing : 1.0;

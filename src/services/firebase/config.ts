@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { initializeFirestore, getFirestore } from 'firebase/firestore';
+import { initializeFirestore, getFirestore, persistentLocalCache } from 'firebase/firestore';
 
 // These would normally be in an .env file
 const firebaseConfig = {
@@ -24,6 +24,7 @@ try {
 let firestore;
 try {
     firestore = initializeFirestore(app, {
+        localCache: persistentLocalCache(),
         experimentalForceLongPolling: true,
     });
 } catch (e) {
