@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 import { COLORS, TYPOGRAPHY, SPACING, RADIUS } from '../../config/theme';
 import { useScanner } from '../../services/ai/scannerService';
@@ -11,6 +11,7 @@ interface ScanScreenProps {
 }
 
 const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
+    const camera = useRef<Camera>(null);
     const device = useCameraDevice('back');
     const { hasPermission, requestPermission } = useCameraPermission();
     const { scanProduct, isScanning, lastResult } = useScanner();
@@ -20,10 +21,23 @@ const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
             await requestPermission();
             return;
         }
-        // In a real implementation with product hardware:
-        // const photo = await camera.current.takePhoto();
-        // const result = await scanProduct(photo.path);
-        const result = await scanProduct('mock-uri');
+
+        if (camera.current) {
+            try {
+                const photo = await camera.current.takePhoto({
+                    flash: 'off'
+                });
+                // In a real device, photo.path is a file URI
+                // For the demo/emulator we might still use mock or convert to base64
+                await scanProduct(photo.path);
+            } catch (err) {
+                console.error('Failed to take photo:', err);
+                await scanProduct('mock-uri');
+            }
+        } else {
+            // Fallback for emulator without camera
+            await scanProduct('mock-uri');
+        }
     };
 
     const confirmProduct = () => {
@@ -35,9 +49,24 @@ const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
         }
     };
 
+    if (device == null) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.loadingText}>No Camera Device Found</Text>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.cameraPreview}>
+                <Camera
+                    ref={camera}
+                    style={StyleSheet.absoluteFill}
+                    device={device}
+                    isActive={!lastResult && !isScanning}
+                    photo={true}
+                />
                 <Text style={styles.scanText}>Point at product...</Text>
                 <View style={styles.targetBox} />
             </View>

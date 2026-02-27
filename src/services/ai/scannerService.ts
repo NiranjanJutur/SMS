@@ -13,11 +13,16 @@ export const useScanner = () => {
             const result = await recognizeProduct(imageBase64);
 
             if (result) {
+                const productName = result.name || 'product';
+                const sanitizedName = productName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                // Ensuring price is captured even if AI uses price_est
+                const finalPrice = result.price || (result as any).price_est || 0;
+
                 const mockBase: Product = {
-                    id: `ai-${Date.now()}`,
-                    name: result.name || 'Unknown Product',
+                    id: `ai-${sanitizedName}-${Date.now().toString().slice(-6)}`,
+                    name: productName,
                     category: result.category || 'Other',
-                    price: result.price || 0,
+                    price: finalPrice,
                     gstPercent: 5,
                     currentStock: 0,
                     minThreshold: 5,
@@ -25,7 +30,7 @@ export const useScanner = () => {
                     imageUrl: '',
                     supplierId: '',
                     supplierPhone: '',
-                    purchasePrice: (result.price || 0) * 0.8,
+                    purchasePrice: (finalPrice || 0) * 0.8,
                     isWeightBased: result.unit === 'kg' || result.unit === 'gm',
                     isActive: true
                 };
