@@ -24,7 +24,7 @@ const HomeScreen = ({ role, navigation }: HomeScreenProps) => {
     const [billsToday, setBillsToday] = useState(0);
     const [lowStockCount, setLowStockCount] = useState(0);
     const { totalOutstanding } = useUdhaar();
-    const { startListening, isListening, recognizedText } = useVoice();
+    const { startListening } = useVoice();
     const [showAddProduct, setShowAddProduct] = useState(false);
 
     const loadData = () => {
@@ -43,8 +43,8 @@ const HomeScreen = ({ role, navigation }: HomeScreenProps) => {
 
     const greeting = () => {
         const h = new Date().getHours();
-        if (h < 12) return 'Good Morning 🌅';
-        if (h < 17) return 'Good Afternoon ☀️';
+        if (h < 12) { return 'Good Morning 🌅'; }
+        if (h < 17) { return 'Good Afternoon ☀️'; }
         return 'Good Evening 🌙';
     };
 
@@ -103,7 +103,7 @@ const HomeScreen = ({ role, navigation }: HomeScreenProps) => {
             {/* Quick Actions */}
             <Text style={styles.sectionTitle}>Quick Actions</Text>
             <View style={styles.quickGrid}>
-                {role === 'CASHIER' || role === 'OWNER' ? (
+                {(role === 'CASHIER' || role === 'OWNER') ? (
                     <>
                         <QuickAction icon="📸" label="Scan Item" onPress={handleScanItem} />
                         <QuickAction icon="📝" label="Process Slip" onPress={() => navigation.navigate('SlipProcessing')} />
@@ -112,13 +112,13 @@ const HomeScreen = ({ role, navigation }: HomeScreenProps) => {
                         <QuickAction icon="👥" label="Customers" onPress={() => navigation.navigate('Customers')} />
                     </>
                 ) : null}
-                {role === 'STOCK_MANAGER' || role === 'OWNER' ? (
+                {(role === 'STOCK_MANAGER' || role === 'OWNER') ? (
                     <>
                         <QuickAction icon="📦" label="Inventory" onPress={() => navigation.navigate('Items')} />
                         <QuickAction icon="➕" label="Add Product" onPress={() => setShowAddProduct(true)} />
                     </>
                 ) : null}
-                {role === 'OWNER' || role === 'ACCOUNTANT' ? (
+                {(role === 'OWNER' || role === 'ACCOUNTANT') ? (
                     <>
                         <QuickAction icon="📊" label="Dashboard" onPress={() => navigation.navigate('Dashboard')} />
                         <QuickAction icon="📄" label="Reports" onPress={handleReports} />

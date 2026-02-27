@@ -25,7 +25,7 @@ export const useVoice = () => {
 
     const parseCommand = async (text: string) => {
         const aiResult = await parseCommandAI(text);
-        if (aiResult) return aiResult;
+        if (aiResult) { return aiResult; }
 
         // Simple mock fallback
         if (text.toLowerCase().includes('add')) {
@@ -33,7 +33,7 @@ export const useVoice = () => {
                 action: 'ADD',
                 item: 'Basmati Rice',
                 qty: 2,
-                unit: 'kg'
+                unit: 'kg',
             };
         }
         return null;
@@ -44,6 +44,6 @@ export const useVoice = () => {
         recognizedText,
         startListening,
         stopListening,
-        parseCommand
+        parseCommand,
     };
 };

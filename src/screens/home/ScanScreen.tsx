@@ -1,6 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { COLORS, TYPOGRAPHY, SPACING, RADIUS } from '../../config/theme';
 import { useScanner } from '../../services/ai/scannerService';
 import { Product } from '../../models/Product';
@@ -11,33 +10,11 @@ interface ScanScreenProps {
 }
 
 const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
-    const camera = useRef<Camera>(null);
-    const device = useCameraDevice('back');
-    const { hasPermission, requestPermission } = useCameraPermission();
     const { scanProduct, isScanning, lastResult } = useScanner();
 
     const handleScan = async () => {
-        if (!hasPermission) {
-            await requestPermission();
-            return;
-        }
-
-        if (camera.current) {
-            try {
-                const photo = await camera.current.takePhoto({
-                    flash: 'off'
-                });
-                // In a real device, photo.path is a file URI
-                // For the demo/emulator we might still use mock or convert to base64
-                await scanProduct(photo.path);
-            } catch (err) {
-                console.error('Failed to take photo:', err);
-                await scanProduct('mock-uri');
-            }
-        } else {
-            // Fallback for emulator without camera
-            await scanProduct('mock-uri');
-        }
+        // Uses mock scan since react-native-vision-camera is not installed
+        await scanProduct('mock-uri');
     };
 
     const confirmProduct = () => {
@@ -49,25 +26,12 @@ const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
         }
     };
 
-    if (device == null) {
-        return (
-            <View style={styles.container}>
-                <Text style={styles.loadingText}>No Camera Device Found</Text>
-            </View>
-        );
-    }
-
     return (
         <View style={styles.container}>
             <View style={styles.cameraPreview}>
-                <Camera
-                    ref={camera}
-                    style={StyleSheet.absoluteFill}
-                    device={device}
-                    isActive={!lastResult && !isScanning}
-                    photo={true}
-                />
-                <Text style={styles.scanText}>Point at product...</Text>
+                <Text style={styles.placeholderText}>📷</Text>
+                <Text style={styles.scanText}>Camera Preview (Mock Mode)</Text>
+                <Text style={styles.subText}>Install react-native-vision-camera for real scanning</Text>
                 <View style={styles.targetBox} />
             </View>
 
@@ -76,7 +40,7 @@ const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
                     <Text style={styles.verifyTitle}>AI Found: {lastResult.name}</Text>
                     <Text style={styles.verifyPrice}>Price: ₹{lastResult.price}</Text>
                     <View style={styles.actionRow}>
-                        <TouchableOpacity style={styles.rejectBtn} onPress={() => handleScan()}>
+                        <TouchableOpacity style={styles.rejectBtn} onPress={handleScan}>
                             <Text style={styles.btnText}>Retry</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.confirmBtn} onPress={confirmProduct}>
@@ -110,12 +74,25 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#111',
+    },
+    placeholderText: {
+        fontSize: 80,
+        marginBottom: 16,
     },
     scanText: {
         color: '#fff',
         fontSize: 18,
         fontFamily: TYPOGRAPHY.BODY,
+        marginBottom: 8,
+    },
+    subText: {
+        color: '#aaa',
+        fontSize: 12,
+        fontFamily: TYPOGRAPHY.BODY,
         marginBottom: 20,
+        textAlign: 'center',
+        paddingHorizontal: 40,
     },
     targetBox: {
         width: 250,

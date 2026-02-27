@@ -22,36 +22,87 @@ const TAB_ICONS: Record<string, string> = {
     Home: '🏠', Items: '📦', Billing: '🧾', Customers: '👥', Dashboard: '📊',
 };
 
+// Separate navigators per role to avoid conditional Tab.Screen (crashes React Navigation)
+const OwnerTabs = ({ role }: { role: string }) => (
+    <Tab.Navigator
+        screenOptions={({ route }) => ({
+            tabBarActiveTintColor: COLORS.PRIMARY,
+            tabBarInactiveTintColor: COLORS.TEXT_DIM,
+            tabBarLabel: route.name,
+            tabBarIcon: ({ focused }) => (
+                <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.5 }}>{TAB_ICONS[route.name] ?? '•'}</Text>
+            ),
+            headerShown: false,
+        })}>
+        <Tab.Screen name="Home">{(props) => <HomeScreen {...props} role={role} />}</Tab.Screen>
+        <Tab.Screen name="Items" component={InventoryScreen} />
+        <Tab.Screen name="Billing" component={BillingScreen} />
+        <Tab.Screen name="Customers" component={CustomersScreen} />
+        <Tab.Screen name="Dashboard">{() => <OwnerDashboard />}</Tab.Screen>
+    </Tab.Navigator>
+);
+
+const CashierTabs = ({ role }: { role: string }) => (
+    <Tab.Navigator
+        screenOptions={({ route }) => ({
+            tabBarActiveTintColor: COLORS.PRIMARY,
+            tabBarInactiveTintColor: COLORS.TEXT_DIM,
+            tabBarLabel: route.name,
+            tabBarIcon: ({ focused }) => (
+                <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.5 }}>{TAB_ICONS[route.name] ?? '•'}</Text>
+            ),
+            headerShown: false,
+        })}>
+        <Tab.Screen name="Home">{(props) => <HomeScreen {...props} role={role} />}</Tab.Screen>
+        <Tab.Screen name="Items" component={InventoryScreen} />
+        <Tab.Screen name="Billing" component={BillingScreen} />
+        <Tab.Screen name="Customers" component={CustomersScreen} />
+    </Tab.Navigator>
+);
+
+const StockManagerTabs = ({ role }: { role: string }) => (
+    <Tab.Navigator
+        screenOptions={({ route }) => ({
+            tabBarActiveTintColor: COLORS.PRIMARY,
+            tabBarInactiveTintColor: COLORS.TEXT_DIM,
+            tabBarLabel: route.name,
+            tabBarIcon: ({ focused }) => (
+                <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.5 }}>{TAB_ICONS[route.name] ?? '•'}</Text>
+            ),
+            headerShown: false,
+        })}>
+        <Tab.Screen name="Home">{(props) => <HomeScreen {...props} role={role} />}</Tab.Screen>
+        <Tab.Screen name="Items" component={InventoryScreen} />
+        <Tab.Screen name="Customers" component={CustomersScreen} />
+    </Tab.Navigator>
+);
+
+const AccountantTabs = ({ role }: { role: string }) => (
+    <Tab.Navigator
+        screenOptions={({ route }) => ({
+            tabBarActiveTintColor: COLORS.PRIMARY,
+            tabBarInactiveTintColor: COLORS.TEXT_DIM,
+            tabBarLabel: route.name,
+            tabBarIcon: ({ focused }) => (
+                <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.5 }}>{TAB_ICONS[route.name] ?? '•'}</Text>
+            ),
+            headerShown: false,
+        })}>
+        <Tab.Screen name="Home">{(props) => <HomeScreen {...props} role={role} />}</Tab.Screen>
+        <Tab.Screen name="Items" component={InventoryScreen} />
+        <Tab.Screen name="Customers" component={CustomersScreen} />
+        <Tab.Screen name="Dashboard">{() => <AccountantDashboard />}</Tab.Screen>
+    </Tab.Navigator>
+);
+
 const TabNavigator = ({ role }: { role: string }) => {
-    return (
-        <Tab.Navigator
-            screenOptions={({ route }) => ({
-                tabBarActiveTintColor: COLORS.PRIMARY,
-                tabBarInactiveTintColor: COLORS.TEXT_DIM,
-                tabBarLabel: route.name,
-                tabBarIcon: ({ focused }) => (
-                    <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.5 }}>{TAB_ICONS[route.name] ?? '•'}</Text>
-                ),
-                headerShown: false,
-            })}>
-            <Tab.Screen name="Home">
-                {(props) => <HomeScreen {...props} role={role} />}
-            </Tab.Screen>
-            <Tab.Screen name="Items" component={InventoryScreen} />
-            {(role === ROLES.CASHIER || role === ROLES.OWNER) && (
-                <Tab.Screen name="Billing" component={BillingScreen} />
-            )}
-            {(role === ROLES.OWNER || role === ROLES.ACCOUNTANT) && (
-                <Tab.Screen name="Dashboard">
-                    {() => role === ROLES.OWNER
-                        ? <OwnerDashboard />
-                        : <AccountantDashboard />
-                    }
-                </Tab.Screen>
-            )}
-            <Tab.Screen name="Customers" component={CustomersScreen} />
-        </Tab.Navigator>
-    );
+    switch (role) {
+        case ROLES.OWNER: return <OwnerTabs role={role} />;
+        case ROLES.CASHIER: return <CashierTabs role={role} />;
+        case ROLES.STOCK_MANAGER: return <StockManagerTabs role={role} />;
+        case ROLES.ACCOUNTANT: return <AccountantTabs role={role} />;
+        default: return <CashierTabs role={role} />;
+    }
 };
 
 const AppNavigator = ({ role, onLogout }: { role: string; onLogout: () => void }) => {
