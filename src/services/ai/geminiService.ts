@@ -1,3 +1,8 @@
+/**
+ * Gemini AI Service
+ * Uses direct REST API calls instead of the @google/generative-ai SDK.
+ * The SDK is browser-only and crashes React Native.
+ */
 import { Product } from '../../models/Product';
 import { SlipOCRResult } from '../../models/Slip';
 
@@ -5,25 +10,23 @@ const GEMINI_API_KEY = 'AIzaSyB0ZeFaq3-1dhw2ALuyq1XojZ1bvdRscgA';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const callGemini = async (parts: object[], responseSchema: object): Promise<any> => {
-    const body = {
-        contents: [{ parts }],
-        generationConfig: {
-            responseMimeType: 'application/json',
-            responseSchema,
-        },
-    };
     const res = await fetch(GEMINI_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+            contents: [{ parts }],
+            generationConfig: {
+                responseMimeType: 'application/json',
+                responseSchema,
+            },
+        }),
     });
     const data = await res.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
-    if (!text) { return null; }
+    if (!text) return null;
     return JSON.parse(text);
 };
 
-// Schema: recognizeProduct
 const PRODUCT_SCHEMA = {
     type: 'object',
     properties: {
@@ -35,7 +38,6 @@ const PRODUCT_SCHEMA = {
     required: ['name', 'category', 'price', 'unit'],
 };
 
-// Schema: extractSlipData
 const SLIP_SCHEMA = {
     type: 'object',
     properties: {
@@ -45,10 +47,7 @@ const SLIP_SCHEMA = {
             type: 'array',
             items: {
                 type: 'object',
-                properties: {
-                    name: { type: 'string' },
-                    qty: { type: 'number' },
-                },
+                properties: { name: { type: 'string' }, qty: { type: 'number' } },
                 required: ['name', 'qty'],
             },
         },
@@ -56,7 +55,6 @@ const SLIP_SCHEMA = {
     required: ['name', 'items'],
 };
 
-// Schema: parseCommandAI
 const COMMAND_SCHEMA = {
     type: 'object',
     properties: {
