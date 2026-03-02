@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
-import { getCustomers, getCustomerTransactions } from '../services/firebase/firestoreService';
+import { getCustomers } from '../services/firebase/firestoreService';
 import { Customer } from '../models/Customer';
-import { Transaction } from '../models/Transaction';
 
 export const useUdhaar = () => {
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        fetchCustomers();
-    }, []);
+    useEffect(() => { fetchCustomers(); }, []);
 
     const fetchCustomers = async () => {
         setLoading(true);

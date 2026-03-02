@@ -1,75 +1,112 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { COLORS, TYPOGRAPHY, SPACING } from '../../config/theme';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { COLORS, SPACING, RADIUS } from '../../config/theme';
 
 interface LoginScreenProps {
     onLogin: (role: string) => void;
 }
 
+const ROLES = [
+    { key: 'OWNER', label: 'Owner', icon: '👑', desc: 'Full access' },
+    { key: 'CASHIER', label: 'Cashier', icon: '🧾', desc: 'Billing & sales' },
+    { key: 'STOCK_MANAGER', label: 'Stock Manager', icon: '📦', desc: 'Inventory control' },
+    { key: 'ACCOUNTANT', label: 'Accountant', icon: '📊', desc: 'Reports & books' },
+];
+
 const LoginScreen = ({ onLogin }: LoginScreenProps) => {
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>FamilyOS</Text>
-            <Text style={styles.subtitle}>Select your role to enter</Text>
+        <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.heroSection}>
+                <Text style={styles.storeName}>🛒 Family Grocery</Text>
+                <Text style={styles.appName}>FamilyOS</Text>
+                <Text style={styles.subtitle}>Select your role to continue</Text>
+            </View>
 
             <View style={styles.grid}>
-                {['OWNER', 'CASHIER', 'STOCK_MANAGER', 'ACCOUNTANT'].map((role) => (
+                {ROLES.map((role) => (
                     <TouchableOpacity
-                        key={role}
+                        key={role.key}
                         style={styles.card}
-                        onPress={() => onLogin(role)}
+                        onPress={() => onLogin(role.key)}
+                        activeOpacity={0.8}
                     >
-                        <Text style={styles.roleText}>{role.replace('_', ' ')}</Text>
+                        <Text style={styles.roleIcon}>{role.icon}</Text>
+                        <Text style={styles.roleLabel}>{role.label}</Text>
+                        <Text style={styles.roleDesc}>{role.desc}</Text>
                     </TouchableOpacity>
                 ))}
             </View>
-        </View>
+
+            <Text style={styles.footer}>Sri Manjunatha Stores</Text>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         backgroundColor: COLORS.BACKGROUND,
         padding: SPACING.LG,
         justifyContent: 'center',
-        alignItems: 'center',
     },
-    title: {
-        fontSize: 32,
-        fontFamily: TYPOGRAPHY.HEADING,
-        color: COLORS.PRIMARY,
+    heroSection: {
+        alignItems: 'center',
+        marginBottom: SPACING.XL,
+    },
+    storeName: {
+        fontSize: 16,
+        color: COLORS.TEXT_DIM,
         marginBottom: SPACING.XS,
     },
+    appName: {
+        fontSize: 40,
+        fontWeight: '800',
+        color: COLORS.PRIMARY,
+        letterSpacing: 2,
+    },
     subtitle: {
-        fontSize: 16,
-        fontFamily: TYPOGRAPHY.BODY,
+        fontSize: 15,
         color: COLORS.TEXT_DIM,
-        marginBottom: SPACING.XL,
+        marginTop: SPACING.SM,
     },
     grid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        width: '100%',
+        gap: SPACING.MD,
     },
     card: {
-        width: '48%',
+        width: '47%',
         backgroundColor: COLORS.WHITE,
         padding: SPACING.LG,
-        borderRadius: 12,
-        marginBottom: SPACING.MD,
+        borderRadius: RADIUS.LG,
         alignItems: 'center',
+        elevation: 3,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
+        borderWidth: 1,
+        borderColor: COLORS.BORDER,
     },
-    roleText: {
-        fontFamily: TYPOGRAPHY.BODY_BOLD,
+    roleIcon: { fontSize: 36, marginBottom: SPACING.SM },
+    roleLabel: {
+        fontSize: 15,
+        fontWeight: '700',
         color: COLORS.TEXT_HEADING,
         textAlign: 'center',
+    },
+    roleDesc: {
+        fontSize: 11,
+        color: COLORS.TEXT_DIM,
+        textAlign: 'center',
+        marginTop: 4,
+    },
+    footer: {
+        textAlign: 'center',
+        color: COLORS.TEXT_DIM,
+        fontSize: 12,
+        marginTop: SPACING.XL,
     },
 });
 

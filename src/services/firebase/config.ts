@@ -1,7 +1,5 @@
 // Firebase web SDK is NOT compatible with React Native.
-// This file is intentionally left as a stub.
-// To use Firebase in React Native, install @react-native-firebase instead.
-// Currently the app uses LocalDataService (AsyncStorage) for all data.
-
+// All data is handled by localDataService (AsyncStorage).
+// To use Firebase, replace with @react-native-firebase.
 export const db = null;
 export default null;

@@ -5,33 +5,22 @@ import LoginScreen from './screens/auth/LoginScreen';
 import AppNavigator from './navigation/AppNavigator';
 
 const App = () => {
-  const [userRole, setUserRole] = useState<string | null>(null);
+    const [userRole, setUserRole] = useState<string | null>(null);
 
-  const handleLogin = (role: string) => {
-    setUserRole(role);
-  };
-
-  const handleLogout = () => {
-    setUserRole(null);
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.BACKGROUND} />
-      {!userRole ? (
-        <LoginScreen onLogin={handleLogin} />
-      ) : (
-        <AppNavigator role={userRole} onLogout={handleLogout} />
-      )}
-    </SafeAreaView>
-  );
+    return (
+        <SafeAreaView style={styles.container}>
+            <StatusBar barStyle="dark-content" backgroundColor={COLORS.BACKGROUND} />
+            {!userRole ? (
+                <LoginScreen onLogin={(role) => setUserRole(role)} />
+            ) : (
+                <AppNavigator role={userRole} onLogout={() => setUserRole(null)} />
+            )}
+        </SafeAreaView>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.BACKGROUND,
-  },
+    container: { flex: 1, backgroundColor: COLORS.BACKGROUND },
 });
 
 export default App;

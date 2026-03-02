@@ -1,7 +1,4 @@
-// Using system fonts to avoid crashes from missing custom font files.
-// To use custom fonts (Lora, Nunito, DMMono), follow:
-// https://reactnative.dev/docs/fonts
-
+// COLORS - Brand palette
 export const COLORS = {
     PRIMARY: '#C0602A',
     SECONDARY: '#E8941A',
@@ -18,11 +15,13 @@ export const COLORS = {
     BORDER: '#DCDCDC',
 };
 
+// TYPOGRAPHY - Safe system fonts only (no custom fonts required)
+// To add custom fonts later: https://reactnative.dev/docs/fonts
 export const TYPOGRAPHY = {
-    HEADING: undefined,
-    BODY: undefined,
-    BODY_BOLD: undefined,
-    MONO: undefined,
+    HEADING: 'serif' as const,
+    BODY: 'sans-serif' as const,
+    BODY_BOLD: 'sans-serif-medium' as const,
+    MONO: 'monospace' as const,
 };
 
 export const SPACING = {

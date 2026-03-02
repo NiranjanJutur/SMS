@@ -1,25 +1,19 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import {
-    View, Text, StyleSheet, FlatList, TouchableOpacity,
-    TextInput, RefreshControl,
-} from 'react-native';
-import { COLORS, TYPOGRAPHY, SPACING, RADIUS } from '../../config/theme';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, RefreshControl } from 'react-native';
+import { COLORS, SPACING, RADIUS } from '../../config/theme';
 import { getProducts } from '../../services/firebase/firestoreService';
 import { Product } from '../../models/Product';
 import { formatCurrency } from '../../utils/billingUtils';
 import AddProductModal from '../../components/AddProductModal';
 import RestockModal from '../../components/RestockModal';
 
-const stockColor = (stock: number, min: number) => {
-    if (stock === 0) return COLORS.ERROR;
-    if (stock <= min) return COLORS.WARNING;
-    return COLORS.SUCCESS;
-};
+const stockColor = (stock: number, min: number) =>
+    stock === 0 ? COLORS.ERROR : stock <= min ? COLORS.WARNING : COLORS.SUCCESS;
 
 const StockBadge = ({ stock, min }: { stock: number; min: number }) => (
     <View style={[styles.badge, { backgroundColor: stockColor(stock, min) + '22' }]}>
         <Text style={[styles.badgeText, { color: stockColor(stock, min) }]}>
-            {stock === 0 ? 'CRITICAL' : stock <= min ? 'LOW' : 'OK'} · {stock}
+            {stock === 0 ? 'OUT' : stock <= min ? 'LOW' : 'OK'} \u00B7 {stock}
         </Text>
     </View>
 );
@@ -44,31 +38,23 @@ const InventoryScreen = () => {
 
     useEffect(() => {
         const q = search.toLowerCase();
-        setFiltered(products.filter(p =>
-            p.name.toLowerCase().includes(q) ||
-            p.category.toLowerCase().includes(q),
-        ));
+        setFiltered(products.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)));
     }, [search, products]);
 
-    const onRefresh = async () => {
-        setRefreshing(true);
-        await loadProducts();
-        setRefreshing(false);
-    };
-
+    const onRefresh = async () => { setRefreshing(true); await loadProducts(); setRefreshing(false); };
     const lowStockCount = products.filter(p => p.currentStock <= p.minThreshold).length;
 
     const renderItem = ({ item }: { item: Product }) => (
         <View style={styles.row}>
             <View style={styles.rowInfo}>
                 <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemCategory}>{item.category} · {item.unit}</Text>
+                <Text style={styles.itemCategory}>{item.category} \u00B7 {item.unit}</Text>
                 <Text style={styles.itemPrice}>{formatCurrency(item.price)} (GST {item.gstPercent}%)</Text>
             </View>
             <View style={styles.rowRight}>
                 <StockBadge stock={item.currentStock} min={item.minThreshold} />
                 <TouchableOpacity style={styles.restockBtn} onPress={() => setRestockProduct(item)}>
-                    <Text style={styles.restockText}>＋ Restock</Text>
+                    <Text style={styles.restockText}>\uFF0B Restock</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -79,15 +65,15 @@ const InventoryScreen = () => {
             <View style={styles.header}>
                 <View>
                     <Text style={styles.title}>Inventory</Text>
-                    <Text style={styles.subtitle}>{products.length} products · {lowStockCount} low stock</Text>
+                    <Text style={styles.subtitle}>{products.length} products \u00B7 {lowStockCount} low</Text>
                 </View>
                 <TouchableOpacity style={styles.addBtn} onPress={() => setShowAddModal(true)}>
-                    <Text style={styles.addBtnText}>＋ Add</Text>
+                    <Text style={styles.addBtnText}>\uFF0B Add</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.searchBox}>
-                <Text style={styles.searchIcon}>🔍</Text>
+                <Text style={styles.searchIcon}>\uD83D\uDD0D</Text>
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Search by name or category..."
@@ -99,7 +85,7 @@ const InventoryScreen = () => {
 
             {lowStockCount > 0 && (
                 <View style={styles.alertBanner}>
-                    <Text style={styles.alertText}>⚠️  {lowStockCount} items need restocking</Text>
+                    <Text style={styles.alertText}>\u26A0\uFE0F  {lowStockCount} items need restocking</Text>
                 </View>
             )}
 
@@ -116,68 +102,35 @@ const InventoryScreen = () => {
                 }
             />
 
-            <AddProductModal
-                visible={showAddModal}
-                onClose={() => setShowAddModal(false)}
-                onAdded={loadProducts}
-            />
-
-            <RestockModal
-                visible={restockProduct !== null}
-                product={restockProduct}
-                onClose={() => setRestockProduct(null)}
-                onRestocked={loadProducts}
-            />
+            <AddProductModal visible={showAddModal} onClose={() => setShowAddModal(false)} onAdded={loadProducts} />
+            <RestockModal visible={restockProduct !== null} product={restockProduct} onClose={() => setRestockProduct(null)} onRestocked={loadProducts} />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: COLORS.BACKGROUND },
-    header: {
-        flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-        padding: SPACING.BASE, backgroundColor: COLORS.WHITE,
-        borderBottomWidth: 1, borderBottomColor: COLORS.BORDER,
-    },
-    title: { fontSize: 22, fontFamily: TYPOGRAPHY.HEADING, color: COLORS.TEXT_HEADING },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: SPACING.BASE, backgroundColor: COLORS.WHITE, borderBottomWidth: 1, borderBottomColor: COLORS.BORDER },
+    title: { fontSize: 22, fontWeight: '800', color: COLORS.TEXT_HEADING },
     subtitle: { fontSize: 12, color: COLORS.TEXT_DIM },
-    addBtn: {
-        backgroundColor: COLORS.PRIMARY, paddingHorizontal: SPACING.MD,
-        paddingVertical: 8, borderRadius: RADIUS.MD,
-    },
-    addBtnText: { color: '#fff', fontFamily: TYPOGRAPHY.BODY_BOLD },
-    searchBox: {
-        flexDirection: 'row', alignItems: 'center',
-        margin: SPACING.BASE, backgroundColor: COLORS.WHITE,
-        borderRadius: RADIUS.MD, paddingHorizontal: SPACING.MD,
-        borderWidth: 1, borderColor: COLORS.BORDER,
-    },
+    addBtn: { backgroundColor: COLORS.PRIMARY, paddingHorizontal: SPACING.MD, paddingVertical: 8, borderRadius: RADIUS.MD },
+    addBtnText: { color: '#fff', fontWeight: '700' },
+    searchBox: { flexDirection: 'row', alignItems: 'center', margin: SPACING.BASE, backgroundColor: COLORS.WHITE, borderRadius: RADIUS.MD, paddingHorizontal: SPACING.MD, borderWidth: 1, borderColor: COLORS.BORDER },
     searchIcon: { fontSize: 16, marginRight: SPACING.SM },
-    searchInput: { flex: 1, height: 44, fontFamily: TYPOGRAPHY.BODY, color: COLORS.TEXT_BODY },
-    alertBanner: {
-        marginHorizontal: SPACING.BASE, marginBottom: SPACING.SM,
-        backgroundColor: COLORS.WARNING + '22', padding: SPACING.SM,
-        borderRadius: RADIUS.SM, borderLeftWidth: 3, borderLeftColor: COLORS.WARNING,
-    },
-    alertText: { fontFamily: TYPOGRAPHY.BODY, color: COLORS.TEXT_HEADING },
+    searchInput: { flex: 1, height: 44, color: COLORS.TEXT_BODY },
+    alertBanner: { marginHorizontal: SPACING.BASE, marginBottom: SPACING.SM, backgroundColor: COLORS.WARNING + '22', padding: SPACING.SM, borderRadius: RADIUS.SM, borderLeftWidth: 3, borderLeftColor: COLORS.WARNING },
+    alertText: { color: COLORS.TEXT_HEADING },
     list: { paddingHorizontal: SPACING.BASE, paddingBottom: SPACING.XL },
-    row: {
-        flexDirection: 'row', justifyContent: 'space-between',
-        backgroundColor: COLORS.WHITE, borderRadius: RADIUS.LG,
-        padding: SPACING.MD, marginBottom: SPACING.SM, elevation: 1,
-    },
+    row: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: COLORS.WHITE, borderRadius: RADIUS.LG, padding: SPACING.MD, marginBottom: SPACING.SM, elevation: 1 },
     rowInfo: { flex: 1 },
-    itemName: { fontSize: 15, fontFamily: TYPOGRAPHY.BODY_BOLD, color: COLORS.TEXT_HEADING },
+    itemName: { fontSize: 15, fontWeight: '700', color: COLORS.TEXT_HEADING },
     itemCategory: { fontSize: 12, color: COLORS.TEXT_DIM, marginTop: 2 },
-    itemPrice: { fontSize: 12, fontFamily: TYPOGRAPHY.MONO, color: COLORS.TEXT_BODY, marginTop: 4 },
+    itemPrice: { fontSize: 12, color: COLORS.TEXT_BODY, marginTop: 4 },
     rowRight: { alignItems: 'flex-end', gap: SPACING.SM },
     badge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
-    badgeText: { fontSize: 11, fontFamily: TYPOGRAPHY.BODY_BOLD },
-    restockBtn: {
-        backgroundColor: COLORS.SUCCESS + '22', paddingHorizontal: 10,
-        paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: COLORS.SUCCESS,
-    },
-    restockText: { fontSize: 12, color: COLORS.SUCCESS, fontFamily: TYPOGRAPHY.BODY_BOLD },
+    badgeText: { fontSize: 11, fontWeight: '700' },
+    restockBtn: { backgroundColor: COLORS.SUCCESS + '22', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: COLORS.SUCCESS },
+    restockText: { fontSize: 12, color: COLORS.SUCCESS, fontWeight: '700' },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: SPACING.XL },
     emptyText: { color: COLORS.TEXT_DIM },
 });
