@@ -5,6 +5,7 @@ import { getTransactions, getProducts } from '../../services/firebase/firestoreS
 import { useUdhaar } from '../../hooks/useUdhaar';
 import { useVoice } from '../../hooks/useVoice';
 import { formatCurrency } from '../../utils/billingUtils';
+import { TRANSLATIONS, Language } from '../../utils/i18n';
 import AddProductModal from '../../components/AddProductModal';
 
 const QuickAction = ({ icon, label, onPress }: { icon: string; label: string; onPress: () => void }) => (
@@ -14,7 +15,8 @@ const QuickAction = ({ icon, label, onPress }: { icon: string; label: string; on
     </TouchableOpacity>
 );
 
-const HomeScreen = ({ role, navigation }: { role: string; navigation: any }) => {
+const HomeScreen = ({ role, navigation, lang = 'en' }: { role: string; navigation: any; lang?: Language }) => {
+    const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
     const [todaySales, setTodaySales] = useState(0);
     const [billsToday, setBillsToday] = useState(0);
     const [lowStockCount, setLowStockCount] = useState(0);
@@ -38,9 +40,9 @@ const HomeScreen = ({ role, navigation }: { role: string; navigation: any }) => 
 
     const greeting = () => {
         const h = new Date().getHours();
-        if (h < 12) return 'Good Morning 🌅';
-        if (h < 17) return 'Good Afternoon ☀️';
-        return 'Good Evening 🌙';
+        if (h < 12) return t.greetings.morning;
+        if (h < 17) return t.greetings.afternoon;
+        return t.greetings.evening;
     };
 
     const handleVoiceAdd = () => {
@@ -65,16 +67,19 @@ const HomeScreen = ({ role, navigation }: { role: string; navigation: any }) => 
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <View style={styles.hero}>
                 <Text style={styles.greeting}>{greeting()}</Text>
-                <Text style={styles.shopName}>Sri Manjunatha Stores</Text>
-                <Text style={styles.roleLabel}>{role.replace('_', ' ')}</Text>
+                <View>
+                    <Text style={styles.shopName}>{t.shopName}</Text>
+                    <Text style={styles.appCaption}>{t.caption}</Text>
+                </View>
+                <Text style={styles.roleLabel}>{t.roles[role as keyof typeof t.roles] || role.replace('_', ' ')}</Text>
             </View>
 
             <View style={styles.statsRow}>
                 {[
-                    { label: "Today's Sales", value: formatCurrency(todaySales), icon: '💰', color: COLORS.SUCCESS },
-                    { label: 'Bills Today', value: `${billsToday}`, icon: '🧾', color: COLORS.SECONDARY },
-                    { label: 'Udhaar Due', value: formatCurrency(totalOutstanding), icon: '📓', color: COLORS.ERROR },
-                    { label: 'Low Stock', value: `${lowStockCount}`, icon: '⚠️', color: COLORS.WARNING },
+                    { label: t.stats.sales, value: formatCurrency(todaySales), icon: '💰', color: COLORS.SUCCESS },
+                    { label: t.stats.bills, value: `${billsToday}`, icon: '🧾', color: COLORS.SECONDARY },
+                    { label: t.stats.udhaar, value: formatCurrency(totalOutstanding), icon: '📓', color: COLORS.ERROR },
+                    { label: t.stats.stock, value: `${lowStockCount}`, icon: '⚠️', color: COLORS.WARNING },
                 ].map(stat => (
                     <View key={stat.label} style={styles.statCard}>
                         <Text style={styles.statIcon}>{stat.icon}</Text>
@@ -84,24 +89,24 @@ const HomeScreen = ({ role, navigation }: { role: string; navigation: any }) => 
                 ))}
             </View>
 
-            <Text style={styles.sectionTitle}>Quick Actions</Text>
+            <Text style={styles.sectionTitle}>{t.actions.title}</Text>
             <View style={styles.quickGrid}>
                 {isCashier && <>
-                    <QuickAction icon="📸" label="Scan Item" onPress={() => navigation.navigate('ScanScreen')} />
-                    <QuickAction icon="📝" label="Process Slip" onPress={() => navigation.navigate('SlipProcessing')} />
-                    <QuickAction icon="🎙️" label="Voice Add" onPress={handleVoiceAdd} />
-                    <QuickAction icon="🧾" label="New Bill" onPress={() => navigation.navigate('Billing')} />
-                    <QuickAction icon="👥" label="Customers" onPress={() => navigation.navigate('Customers')} />
+                    <QuickAction icon="📸" label={t.actions.scan} onPress={() => navigation.navigate('ScanScreen')} />
+                    <QuickAction icon="📝" label={t.actions.slip} onPress={() => navigation.navigate('SlipProcessing')} />
+                    <QuickAction icon="🎙️" label={t.actions.voice} onPress={handleVoiceAdd} />
+                    <QuickAction icon="🧾" label={t.actions.bill} onPress={() => navigation.navigate('Billing')} />
+                    <QuickAction icon="👥" label={t.actions.customers} onPress={() => navigation.navigate('Customers')} />
                 </>}
                 {isStock && <>
-                    <QuickAction icon="📦" label="Inventory" onPress={() => navigation.navigate('Items')} />
-                    <QuickAction icon="➕" label="Add Product" onPress={() => setShowAddProduct(true)} />
+                    <QuickAction icon="📦" label={t.actions.inventory} onPress={() => navigation.navigate('Items')} />
+                    <QuickAction icon="➕" label={t.actions.addProduct} onPress={() => setShowAddProduct(true)} />
                 </>}
                 {isAccountant && <>
-                    <QuickAction icon="📊" label="Dashboard" onPress={() => navigation.navigate('Dashboard')} />
+                    <QuickAction icon="📊" label={t.actions.dashboard} onPress={() => navigation.navigate('Dashboard')} />
                 </>}
                 {/* Bills history — visible to everyone */}
-                <QuickAction icon="📋" label="View Bills" onPress={() => navigation.navigate('Bills')} />
+                <QuickAction icon="📋" label={t.actions.viewBills} onPress={() => navigation.navigate('Bills')} />
             </View>
 
             {lowStockCount > 0 && (
@@ -128,7 +133,8 @@ const styles = StyleSheet.create({
     hero: { backgroundColor: COLORS.PRIMARY, padding: SPACING.XL, paddingTop: SPACING.XXL },
     greeting: { color: '#FFFFFF99', fontSize: 14 },
     shopName: { color: '#FFFFFF', fontSize: 28, fontWeight: '800', marginTop: 4 },
-    roleLabel: { color: COLORS.SECONDARY, fontSize: 12, marginTop: 6, textTransform: 'uppercase', fontWeight: '700', letterSpacing: 1 },
+    appCaption: { color: '#FFFFFFCC', fontSize: 13, fontWeight: '600', marginTop: -2 },
+    roleLabel: { color: COLORS.SECONDARY, fontSize: 12, marginTop: 10, textTransform: 'uppercase', fontWeight: '700', letterSpacing: 1 },
     statsRow: { flexDirection: 'row', flexWrap: 'wrap', padding: SPACING.SM, gap: SPACING.SM },
     statCard: { width: '47%', backgroundColor: COLORS.WHITE, borderRadius: RADIUS.LG, padding: SPACING.MD, elevation: 1, alignItems: 'center' },
     statIcon: { fontSize: 22 },

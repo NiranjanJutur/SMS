@@ -1,97 +1,96 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Sri Manjunatha Stores (SMS) 🏪
+### Smart Retail & Inventory Management System
 
-# Getting Started
+> **Kannada:** ಶ್ರೀ ಮಂಜುನಾಥ ಸ್ಟೋರ್ಸ್ (SMS) — ಸ್ಮಾರ್ಟ್ ಚಿಲ್ಲರೆ ಮತ್ತು ದಾಸ್ತಾನು ನಿರ್ವಹಣಾ ವ್ಯವಸ್ಥೆ
+>
+> **Hindi:** श्री मंजುनाथ स्टोर्स (SMS) — स्मार्ट रिटेल और इन्ವೆंट्री मैनेजमेंट सिस्टम
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## 🚀 Overview
+**SMS (Sri Manjunatha Stores)** is a modern, voice-enabled Point of Sale (POS) and Inventory Management web application designed specifically for retail store owners. It simplifies daily billing, tracks credit (Udhaar), manages stock with multi-unit support, and provides deep insights into sales.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+Whether you are a **Cashier** looking for fast billing, a **Stock Manager** tracking boxes and cartons, or an **Owner** reviewing business performance, SMS provides a seamless experience.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+---
 
-```sh
-# Using npm
-npm start
+## ✨ Key Features
 
-# OR using Yarn
-yarn start
-```
+### 🎙️ Voice-First Billing
+Add products to the bill just by speaking! Commands like *"Add 2 kg Basmati Rice"* or *"Add 5 boxes of Parle-G"* are automatically parsed and added to the cart instantly.
 
-## Step 2: Build and run your app
+### 🏷️ Flexible Discounting & Notes
+*   **Item-Level Discounts:** Long-press any item to apply a flat ₹ discount or a % off.
+*   **Item Notes:** Add specific reminders for products (e.g., "sugar-free", "extra packing").
+*   **Bill-Level Discounts:** Apply a final discount to the entire bill total before checkout.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### 📦 Smart Multi-Unit Inventory
+Support for complex retail units used in India:
+*   **Weight:** kg, g, gm
+*   **Volume:** ltr, ml, can, tin
+*   **Containers:** Box, Carton, Bag, Packet
+*   **Pack Sizes:** Set a "Pack Size" once in the inventory (e.g., 1 Box = 12 Pieces). During billing, just enter the number of boxes, and SMS handles the math automatically.
 
-### Android
+### 📓 Udhaar & Customer Management
+*   Track outstanding balances for regular customers.
+*   Set credit limits per customer type (VIP, Small Retailer, etc.).
+*   Easy checkout using UPI, Cash, or **Udhaar**.
 
-```sh
-# Using npm
-npm run android
+### 📊 Role-Based Access
+*   **Owner:** Full control over products, staff, and financial reports.
+*   **Cashier:** Focused on fast billing and customer service.
+*   **Stock Manager:** Managing arrivals, low-stock alerts, and threshold management.
+*   **Accountant:** Detailed sales analytics and tax (GST) reports.
 
-# OR using Yarn
-yarn android
-```
+---
 
-### iOS
+## 🛠️ Tech Stack
+- **Frontend:** React with TypeScript
+- **Styling:** Custom CSS based on a premium Design System (Theme.ts)
+- **State Management:** Custom Hooks (`useCart`, `useUdhaar`, `useVoice`)
+- **Backend:** Firebase (Firestore) for real-time data sync
+- **Build Tool:** Vite
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+---
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## 🏗️ Getting Started
 
-```sh
-bundle install
-```
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
 
-Then, and every time you update your native dependencies, run:
+### Installation
+1.  **Clone the Repository:**
+    ```sh
+    git clone https://github.com/NiranjanJutur/SMS.git
+    cd SMS
+    ```
 
-```sh
-bundle exec pod install
-```
+2.  **Install Dependencies:**
+    ```sh
+    npm install
+    ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+3.  **Run Locally (Web):**
+    ```sh
+    npm run web:dev
+    ```
+    The app will be available at `http://localhost:5173`.
 
-```sh
-# Using npm
-npm run ios
+---
 
-# OR using Yarn
-yarn ios
-```
+## 🧹 Project Structure
+*   `src/screens/` - Role-specific dashboards and feature pages.
+*   `src/components/` - Reusable UI components (Modals, Buttons, Inputs).
+*   `src/hooks/` - Core logic for Cart, Voice, and Credit management.
+*   `src/services/` - Firebase and Local data interaction layers.
+*   `src/utils/` - Unit conversion, currency formatting, and billing math.
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## ⚖️ License
+This project is private and intended for use by **Sri Manjunatha Stores**. 
+Owner: **Niranjan Jutur**
 
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+---
+*Built with ❤️ for better retail management.*
