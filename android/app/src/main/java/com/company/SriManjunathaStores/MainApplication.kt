@@ -17,6 +17,6 @@ class MainApplication : Application(), ReactApplication {
   override fun onCreate() {
     super.onCreate()
     SoLoader.init(this, false)
-    loadReactNative(this)
+    // loadReactNative(this)
   }
 }
