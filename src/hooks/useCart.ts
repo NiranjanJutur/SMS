@@ -11,7 +11,7 @@ export interface CartItem {
     quantity: number;
 }
 
-export const useCart = (currentUserId: string) => {
+export const useCart = (currentUserId: string, cashierName = 'Staff') => {
     const [items, setItems] = useState<CartItem[]>([]);
     const [customer, setCustomer] = useState<Customer | null>(null);
     const [billNo] = useState(() => `#${Date.now().toString().slice(-4)}`);
@@ -47,7 +47,12 @@ export const useCart = (currentUserId: string) => {
         setCustomer(null);
     };
 
-    const checkout = async (paymentType: string) => {
+    const checkout = async (
+        paymentType: string,
+        splitAmounts?: { cash: number; upi: number; card: number; udhaar: number },
+        orderType?: string,
+        deliveryAddress?: string,
+    ) => {
         const customerType = customer?.type ?? 'house';
         const totals = calculateCartTotals(items, customerType);
 
@@ -61,15 +66,25 @@ export const useCart = (currentUserId: string) => {
             total: i.product.price * i.quantity,
         }));
 
+        // Determine effective payment type
+        const isSplit = splitAmounts &&
+            [splitAmounts.cash, splitAmounts.upi, splitAmounts.card, splitAmounts.udhaar]
+                .filter(v => v > 0).length > 1;
+
         const txn = {
             billNo,
             items: txnItems,
             subtotal: totals.subtotal,
             totalGST: totals.totalGst,
             grandTotal: totals.grandTotal,
-            paymentType: paymentType as any,
+            paymentType: (isSplit ? 'SPLIT' : paymentType) as any,
+            paymentSplit: splitAmounts,
             customerId: customer?.id,
+            customerName: customer?.name,
             cashierId: currentUserId,
+            cashierName,
+            orderType: orderType as any,
+            deliveryAddress,
             timestamp: new Date().toISOString(),
             isReturn: false,
         };
@@ -82,9 +97,10 @@ export const useCart = (currentUserId: string) => {
             await updateStock(item.product.id, newStock);
         }
 
-        // Update udhaar balance if credit sale
-        if (paymentType === 'UDHAAR' && customer?.id) {
-            await updateCustomerBalance(customer.id, totals.grandTotal);
+        // Update udhaar: full UDHAAR payment or split udhaar portion
+        const udhaarAmt = isSplit ? (splitAmounts?.udhaar || 0) : (paymentType === 'UDHAAR' ? totals.grandTotal : 0);
+        if (udhaarAmt > 0 && customer?.id) {
+            await updateCustomerBalance(customer.id, udhaarAmt);
         }
 
         // Generate and send PDF

@@ -17,8 +17,7 @@ const LoginScreen = ({ onLogin }: LoginScreenProps) => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.heroSection}>
-                <Text style={styles.storeName}>🛒 Family Grocery</Text>
-                <Text style={styles.appName}>FamilyOS</Text>
+                <Text style={styles.appName}>Sri Manjunatha Stores</Text>
                 <Text style={styles.subtitle}>Select your role to continue</Text>
             </View>
 
@@ -37,7 +36,7 @@ const LoginScreen = ({ onLogin }: LoginScreenProps) => {
                 ))}
             </View>
 
-            <Text style={styles.footer}>Sri Manjunatha Stores</Text>
+
         </ScrollView>
     );
 };

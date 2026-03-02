@@ -143,6 +143,15 @@ export const addCustomer = async (customer: Omit<Customer, 'id'>): Promise<strin
     return id;
 };
 
+export const updateCustomer = async (id: string, data: Partial<Customer>): Promise<void> => {
+    const customers = await getAll<Customer>(KEYS.CUSTOMERS);
+    const idx = customers.findIndex(c => c.id === id);
+    if (idx >= 0) {
+        customers[idx] = { ...customers[idx], ...data };
+        await saveAll(KEYS.CUSTOMERS, customers);
+    }
+};
+
 export const updateCustomerBalance = async (customerId: string, amountDelta: number): Promise<void> => {
     const customers = await getAll<Customer>(KEYS.CUSTOMERS);
     const idx = customers.findIndex(c => c.id === customerId);

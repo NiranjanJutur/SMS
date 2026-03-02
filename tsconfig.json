@@ -3,6 +3,10 @@
   "compilerOptions": {
     "jsx": "react-native",
     "esModuleInterop": true,
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "types": [
       "jest"
     ]

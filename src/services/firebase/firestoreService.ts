@@ -22,3 +22,4 @@ export const {
 export const getCustomer = LocalService.getCustomer;
 export const getCustomerTransactions = LocalService.getCustomerTransactions;
 export const updateProduct = LocalService.updateProduct;
+export const updateCustomer = LocalService.updateCustomer;

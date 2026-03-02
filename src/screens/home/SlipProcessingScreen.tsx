@@ -43,6 +43,14 @@ const SlipProcessingScreen = ({ navigation }: { navigation: any }) => {
 
     return (
         <View style={styles.container}>
+            {/* Back Button */}
+            <View style={styles.backBar}>
+                <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+                    <Text style={styles.backBtnText}>← Back</Text>
+                </TouchableOpacity>
+                <Text style={styles.backBarTitle}>Process Slip</Text>
+                <View style={{ width: 70 }} />
+            </View>
             {!result && !isProcessing && (
                 <View style={styles.emptyState}>
                     <Text style={styles.icon}>📄</Text>
@@ -94,6 +102,10 @@ const SlipProcessingScreen = ({ navigation }: { navigation: any }) => {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: COLORS.BACKGROUND },
+    backBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: COLORS.WHITE, paddingHorizontal: SPACING.MD, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: COLORS.BORDER },
+    backBtn: { flexDirection: 'row', alignItems: 'center', paddingVertical: 4, paddingHorizontal: 8, borderRadius: RADIUS.MD, backgroundColor: COLORS.BACKGROUND },
+    backBtnText: { color: COLORS.PRIMARY, fontWeight: '700', fontSize: 15 },
+    backBarTitle: { fontSize: 16, fontWeight: '700', color: COLORS.TEXT_HEADING },
     emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: SPACING.XL },
     icon: { fontSize: 64, marginBottom: SPACING.LG },
     title: { fontSize: 24, fontFamily: TYPOGRAPHY.HEADING, color: COLORS.TEXT_HEADING, textAlign: 'center' },

@@ -6,7 +6,7 @@
  * This prevents 1000x pricing errors when units mismatch.
  */
 
-export type WeightUnit = 'kg' | 'g' | 'gm' | 'ltr' | 'ml' | 'pcs' | 'pkt';
+export type WeightUnit = 'kg' | 'g' | 'gm' | 'ltr' | 'ml' | 'pcs' | 'pkt' | 'bag' | 'box' | 'carton' | 'can' | 'dozen';
 
 interface ConversionRule {
     base: string;
@@ -15,30 +15,33 @@ interface ConversionRule {
 
 const CONVERSION_TABLE: Record<string, ConversionRule> = {
     // Weight
-    'g':         { base: 'kg', factor: 0.001 },
-    'gm':        { base: 'kg', factor: 0.001 },
-    'gram':      { base: 'kg', factor: 0.001 },
-    'grams':     { base: 'kg', factor: 0.001 },
-    'kg':        { base: 'kg', factor: 1 },
-    'kilogram':  { base: 'kg', factor: 1 },
+    'g': { base: 'kg', factor: 0.001 },
+    'gm': { base: 'kg', factor: 0.001 },
+    'gram': { base: 'kg', factor: 0.001 },
+    'grams': { base: 'kg', factor: 0.001 },
+    'kg': { base: 'kg', factor: 1 },
+    'kilogram': { base: 'kg', factor: 1 },
     'kilograms': { base: 'kg', factor: 1 },
     // Volume
-    'ml':        { base: 'ltr', factor: 0.001 },
-    'milliliter':{ base: 'ltr', factor: 0.001 },
-    'ltr':       { base: 'ltr', factor: 1 },
-    'litre':     { base: 'ltr', factor: 1 },
-    'liter':     { base: 'ltr', factor: 1 },
-    'l':         { base: 'ltr', factor: 1 },
+    'ml': { base: 'ltr', factor: 0.001 },
+    'milliliter': { base: 'ltr', factor: 0.001 },
+    'ltr': { base: 'ltr', factor: 1 },
+    'litre': { base: 'ltr', factor: 1 },
+    'liter': { base: 'ltr', factor: 1 },
+    'l': { base: 'ltr', factor: 1 },
     // Count
-    'pcs':       { base: 'pcs', factor: 1 },
-    'piece':     { base: 'pcs', factor: 1 },
-    'pieces':    { base: 'pcs', factor: 1 },
-    'pkt':       { base: 'pcs', factor: 1 },
-    'packet':    { base: 'pcs', factor: 1 },
-    'packets':   { base: 'pcs', factor: 1 },
-    'bag':       { base: 'pcs', factor: 1 },
-    'box':       { base: 'pcs', factor: 1 },
-    'dozen':     { base: 'pcs', factor: 12 },
+    'pcs': { base: 'pcs', factor: 1 },
+    'piece': { base: 'pcs', factor: 1 },
+    'pieces': { base: 'pcs', factor: 1 },
+    'pkt': { base: 'pcs', factor: 1 },
+    'packet': { base: 'pcs', factor: 1 },
+    'packets': { base: 'pcs', factor: 1 },
+    'bag': { base: 'pcs', factor: 1 },
+    'box': { base: 'pcs', factor: 1 },
+    'carton': { base: 'pcs', factor: 1 },
+    'can': { base: 'pcs', factor: 1 },
+    'tin': { base: 'pcs', factor: 1 },
+    'dozen': { base: 'pcs', factor: 12 },
 };
 
 /**

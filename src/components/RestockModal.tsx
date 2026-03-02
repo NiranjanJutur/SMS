@@ -16,7 +16,7 @@ const RestockModal = ({ visible, product, onClose, onRestocked }: { visible: boo
             const newStock = product.currentStock + Number(qty);
             await updateStock(product.id, newStock);
             setQty(''); onRestocked(); onClose();
-            Alert.alert('\u2705 Restocked', `${product.name} is now ${newStock} ${product.unit}`);
+            Alert.alert('✅ Restocked', `${product.name} is now ${newStock} ${product.unit}`);
         } catch { Alert.alert('Error', 'Failed to update stock'); }
         finally { setSaving(false); }
     };
@@ -29,17 +29,17 @@ const RestockModal = ({ visible, product, onClose, onRestocked }: { visible: boo
                 <View style={styles.sheet}>
                     <View style={styles.header}>
                         <Text style={styles.title}>Restock</Text>
-                        <TouchableOpacity onPress={onClose}><Text style={styles.closeBtn}>\u2715</Text></TouchableOpacity>
+                        <TouchableOpacity onPress={onClose}><Text style={styles.closeBtn}>✕</Text></TouchableOpacity>
                     </View>
                     <View style={styles.body}>
                         <Text style={styles.productName}>{product.name}</Text>
-                        <Text style={styles.meta}>{product.category} \u00B7 {product.unit}</Text>
+                        <Text style={styles.meta}>{product.category} · {product.unit}</Text>
                         <View style={styles.stockInfo}>
                             <View style={styles.stockBox}>
                                 <Text style={styles.stockLabel}>Current</Text>
                                 <Text style={[styles.stockValue, { color: product.currentStock <= product.minThreshold ? COLORS.ERROR : COLORS.SUCCESS }]}>{product.currentStock}</Text>
                             </View>
-                            <Text style={styles.arrow}>\u2192</Text>
+                            <Text style={styles.arrow}>→</Text>
                             <View style={styles.stockBox}>
                                 <Text style={styles.stockLabel}>After</Text>
                                 <Text style={[styles.stockValue, { color: COLORS.SUCCESS }]}>{product.currentStock + (Number(qty) || 0)}</Text>
@@ -49,7 +49,7 @@ const RestockModal = ({ visible, product, onClose, onRestocked }: { visible: boo
                         <TextInput style={styles.input} placeholder="e.g. 20" placeholderTextColor={COLORS.TEXT_DIM} value={qty} onChangeText={setQty} keyboardType="numeric" autoFocus />
                     </View>
                     <TouchableOpacity style={[styles.saveBtn, saving && { opacity: 0.6 }]} onPress={handleRestock} disabled={saving}>
-                        <Text style={styles.saveBtnText}>{saving ? 'Updating...' : '\uD83D\uDCE6 Restock'}</Text>
+                        <Text style={styles.saveBtnText}>{saving ? 'Updating...' : '📦 Restock'}</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>

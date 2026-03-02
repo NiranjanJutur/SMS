@@ -1,0 +1,44 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
+
+export default defineConfig({
+    define: {
+        global: 'window',
+        __DEV__: JSON.stringify(true),
+        'process.env.NODE_ENV': JSON.stringify('development'),
+    },
+    plugins: [react()],
+    resolve: {
+        alias: {
+            'react-native': 'react-native-web',
+        },
+        extensions: [
+            '.web.js',
+            '.web.jsx',
+            '.web.ts',
+            '.web.tsx',
+            '.js',
+            '.jsx',
+            '.ts',
+            '.tsx',
+        ],
+    },
+    optimizeDeps: {
+        esbuildOptions: {
+            resolveExtensions: [
+                '.web.js',
+                '.web.jsx',
+                '.web.ts',
+                '.web.tsx',
+                '.js',
+                '.jsx',
+                '.ts',
+                '.tsx',
+            ],
+            loader: {
+                '.js': 'jsx',
+            },
+        },
+    },
+});

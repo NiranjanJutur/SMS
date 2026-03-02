@@ -28,32 +28,32 @@ const HomeScreen = ({ role, navigation }: { role: string; navigation: any }) => 
             const todayTxns = data.filter(t => new Date(t.timestamp).toDateString() === todayStr);
             setTodaySales(todayTxns.reduce((s, t) => s + t.grandTotal, 0));
             setBillsToday(todayTxns.length);
-        }).catch(() => {});
+        }).catch(() => { });
         getProducts().then(prods => {
             setLowStockCount(prods.filter(p => p.currentStock <= p.minThreshold).length);
-        }).catch(() => {});
+        }).catch(() => { });
     };
 
     useEffect(() => { loadData(); }, []);
 
     const greeting = () => {
         const h = new Date().getHours();
-        if (h < 12) return 'Good Morning \uD83C\uDF05';
-        if (h < 17) return 'Good Afternoon \u2600\uFE0F';
-        return 'Good Evening \uD83C\uDF19';
+        if (h < 12) return 'Good Morning 🌅';
+        if (h < 17) return 'Good Afternoon ☀️';
+        return 'Good Evening 🌙';
     };
 
     const handleVoiceAdd = () => {
-        Alert.alert('\uD83C\uDF99\uFE0F Voice Input', 'Say a command like:\n"Add 2 kg Basmati Rice"', [
+        Alert.alert('🎙️ Voice Input', 'Say a command like:\n"Add 2 kg Basmati Rice"', [
             { text: 'Cancel', style: 'cancel' },
             {
                 text: 'Start Listening',
                 onPress: () => {
                     startListening();
-                    setTimeout(() => Alert.alert('\uD83C\uDF99\uFE0F Heard', '"Add 2 kg Basmati Rice"\n\nParsed action applied.'), 2500);
+                    setTimeout(() => Alert.alert('🎙️ Heard', '"Add 2 kg Basmati Rice"\n\nParsed action applied.'), 2500);
                 },
             },
-        ]);
+        ],);
     };
 
     const isOwner = role === 'OWNER';
@@ -65,16 +65,16 @@ const HomeScreen = ({ role, navigation }: { role: string; navigation: any }) => 
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <View style={styles.hero}>
                 <Text style={styles.greeting}>{greeting()}</Text>
-                <Text style={styles.shopName}>Family Grocery</Text>
+                <Text style={styles.shopName}>Sri Manjunatha Stores</Text>
                 <Text style={styles.roleLabel}>{role.replace('_', ' ')}</Text>
             </View>
 
             <View style={styles.statsRow}>
                 {[
-                    { label: "Today's Sales", value: formatCurrency(todaySales), icon: '\uD83D\uDCB0', color: COLORS.SUCCESS },
-                    { label: 'Bills Today', value: `${billsToday}`, icon: '\uD83E\uDDFE', color: COLORS.SECONDARY },
-                    { label: 'Udhaar Due', value: formatCurrency(totalOutstanding), icon: '\uD83D\uDCD2', color: COLORS.ERROR },
-                    { label: 'Low Stock', value: `${lowStockCount}`, icon: '\u26A0\uFE0F', color: COLORS.WARNING },
+                    { label: "Today's Sales", value: formatCurrency(todaySales), icon: '💰', color: COLORS.SUCCESS },
+                    { label: 'Bills Today', value: `${billsToday}`, icon: '🧾', color: COLORS.SECONDARY },
+                    { label: 'Udhaar Due', value: formatCurrency(totalOutstanding), icon: '📓', color: COLORS.ERROR },
+                    { label: 'Low Stock', value: `${lowStockCount}`, icon: '⚠️', color: COLORS.WARNING },
                 ].map(stat => (
                     <View key={stat.label} style={styles.statCard}>
                         <Text style={styles.statIcon}>{stat.icon}</Text>
@@ -87,24 +87,26 @@ const HomeScreen = ({ role, navigation }: { role: string; navigation: any }) => 
             <Text style={styles.sectionTitle}>Quick Actions</Text>
             <View style={styles.quickGrid}>
                 {isCashier && <>
-                    <QuickAction icon="\uD83D\uDCF8" label="Scan Item" onPress={() => navigation.navigate('ScanScreen')} />
-                    <QuickAction icon="\uD83D\uDCDD" label="Process Slip" onPress={() => navigation.navigate('SlipProcessing')} />
-                    <QuickAction icon="\uD83C\uDF99\uFE0F" label="Voice Add" onPress={handleVoiceAdd} />
-                    <QuickAction icon="\uD83E\uDDFE" label="New Bill" onPress={() => navigation.navigate('Billing')} />
-                    <QuickAction icon="\uD83D\uDC65" label="Customers" onPress={() => navigation.navigate('Customers')} />
+                    <QuickAction icon="📸" label="Scan Item" onPress={() => navigation.navigate('ScanScreen')} />
+                    <QuickAction icon="📝" label="Process Slip" onPress={() => navigation.navigate('SlipProcessing')} />
+                    <QuickAction icon="🎙️" label="Voice Add" onPress={handleVoiceAdd} />
+                    <QuickAction icon="🧾" label="New Bill" onPress={() => navigation.navigate('Billing')} />
+                    <QuickAction icon="👥" label="Customers" onPress={() => navigation.navigate('Customers')} />
                 </>}
                 {isStock && <>
-                    <QuickAction icon="\uD83D\uDCE6" label="Inventory" onPress={() => navigation.navigate('Items')} />
-                    <QuickAction icon="\u2795" label="Add Product" onPress={() => setShowAddProduct(true)} />
+                    <QuickAction icon="📦" label="Inventory" onPress={() => navigation.navigate('Items')} />
+                    <QuickAction icon="➕" label="Add Product" onPress={() => setShowAddProduct(true)} />
                 </>}
                 {isAccountant && <>
-                    <QuickAction icon="\uD83D\uDCCA" label="Dashboard" onPress={() => navigation.navigate('Dashboard')} />
+                    <QuickAction icon="📊" label="Dashboard" onPress={() => navigation.navigate('Dashboard')} />
                 </>}
+                {/* Bills history — visible to everyone */}
+                <QuickAction icon="📋" label="View Bills" onPress={() => navigation.navigate('Bills')} />
             </View>
 
             {lowStockCount > 0 && (
-                <TouchableOpacity style={styles.alertCard} onPress={() => navigation.navigate('Items')}>
-                    <Text style={styles.alertIcon}>\u26A0\uFE0F</Text>
+                <TouchableOpacity style={styles.alertCard} onPress={() => navigation.navigate('Items', { filter: 'low' })}>
+                    <Text style={styles.alertIcon}>⚠️</Text>
                     <View>
                         <Text style={styles.alertTitle}>{lowStockCount} items running low!</Text>
                         <Text style={styles.alertSub}>Tap to view inventory</Text>

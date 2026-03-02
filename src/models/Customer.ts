@@ -14,4 +14,5 @@ export interface Customer {
     slipImages: string[];
     notes?: string;
     isActive: boolean;
+    photoUrl?: string;
 }

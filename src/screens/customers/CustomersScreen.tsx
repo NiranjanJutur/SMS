@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, RefreshControl, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, RefreshControl, Image } from 'react-native';
 import { COLORS, SPACING, RADIUS } from '../../config/theme';
-import { getCustomers, getCustomerTransactions } from '../../services/firebase/firestoreService';
+import { getCustomers } from '../../services/firebase/firestoreService';
 import { Customer } from '../../models/Customer';
 import { formatCurrency } from '../../utils/billingUtils';
 import AddCustomerModal from '../../components/AddCustomerModal';
+import CustomerProfileScreen from './CustomerProfileScreen';
 
 const TYPE_COLORS: Record<string, string> = {
     house: COLORS.SUCCESS, small_shop: COLORS.SECONDARY, hotel: COLORS.PRIMARY,
@@ -15,11 +16,15 @@ const CustomerCard = ({ customer, onPress }: { customer: Customer; onPress: () =
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.75}>
         <View style={styles.cardLeft}>
             <View style={[styles.avatar, { backgroundColor: TYPE_COLORS[customer.type] || COLORS.PRIMARY }]}>
-                <Text style={styles.avatarText}>{customer.name.charAt(0).toUpperCase()}</Text>
+                {customer.photoUrl ? (
+                    <Image source={{ uri: customer.photoUrl }} style={styles.avatarImage} />
+                ) : (
+                    <Text style={styles.avatarText}>{customer.name.charAt(0).toUpperCase()}</Text>
+                )}
             </View>
             <View>
                 <Text style={styles.customerName}>{customer.name}</Text>
-                <Text style={styles.customerId}>\uD83D\uDCD2 {customer.udhaarId}</Text>
+                <Text style={styles.customerId}>📓 {customer.udhaarId}</Text>
                 <View style={[styles.typeBadge, { backgroundColor: (TYPE_COLORS[customer.type] || COLORS.PRIMARY) + '22' }]}>
                     <Text style={[styles.typeText, { color: TYPE_COLORS[customer.type] || COLORS.PRIMARY }]}>
                         {customer.type.replace('_', ' ').toUpperCase()}
@@ -43,6 +48,7 @@ const CustomersScreen = () => {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
 
     const loadCustomers = useCallback(async () => {
         const data = await getCustomers();
@@ -58,15 +64,15 @@ const CustomersScreen = () => {
 
     const onRefresh = async () => { setRefreshing(true); await loadCustomers(); setRefreshing(false); };
 
-    const showCustomerDetail = async (customer: Customer) => {
-        const txns = await getCustomerTransactions(customer.id);
-        const txnSummary = txns.length > 0
-            ? txns.slice(0, 3).map(t => `\u2022 ${t.billNo}: ${formatCurrency(t.grandTotal)} (${t.paymentType})`).join('\n')
-            : 'No transactions yet';
-        Alert.alert(customer.name,
-            `\uD83D\uDCD2 ${customer.udhaarId}\n\uD83D\uDCF1 ${customer.phone}\n\uD83C\uDFF7\uFE0F ${customer.type} \u00B7 Credit: ${formatCurrency(customer.creditLimit)}\n\uD83D\uDCB0 Outstanding: ${formatCurrency(customer.totalOutstanding)}\n\n${txnSummary}`,
-            [{ text: 'Close', style: 'cancel' }]);
-    };
+    // If a customer is selected, show the profile screen inline
+    if (selectedCustomer) {
+        return (
+            <CustomerProfileScreen
+                customer={selectedCustomer}
+                onBack={() => setSelectedCustomer(null)}
+            />
+        );
+    }
 
     if (loading) return <View style={styles.center}><Text style={{ color: COLORS.TEXT_DIM }}>Loading...</Text></View>;
 
@@ -78,19 +84,19 @@ const CustomersScreen = () => {
                     <Text style={styles.subtitle}>{customers.length} total</Text>
                 </View>
                 <TouchableOpacity style={styles.addBtn} onPress={() => setShowAddModal(true)}>
-                    <Text style={styles.addBtnText}>\uFF0B Add</Text>
+                    <Text style={styles.addBtnText}>+ Add</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.searchBox}>
-                <Text style={styles.searchIcon}>\uD83D\uDD0D</Text>
+                <Text style={styles.searchIcon}>🔍</Text>
                 <TextInput style={styles.searchInput} placeholder="Search name, phone, ID..." placeholderTextColor={COLORS.TEXT_DIM} value={search} onChangeText={setSearch} />
             </View>
 
             <FlatList
                 data={filtered}
                 keyExtractor={item => item.id}
-                renderItem={({ item }) => <CustomerCard customer={item} onPress={() => showCustomerDetail(item)} />}
+                renderItem={({ item }) => <CustomerCard customer={item} onPress={() => setSelectedCustomer(item)} />}
                 contentContainerStyle={styles.list}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.PRIMARY]} />}
                 ListEmptyComponent={<View style={styles.center}><Text style={styles.emptyText}>No customers found.</Text></View>}
@@ -115,7 +121,8 @@ const styles = StyleSheet.create({
     list: { paddingHorizontal: SPACING.BASE, paddingBottom: SPACING.XL },
     card: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: COLORS.WHITE, borderRadius: RADIUS.LG, padding: SPACING.MD, marginBottom: SPACING.SM, elevation: 1 },
     cardLeft: { flexDirection: 'row', alignItems: 'center', gap: SPACING.MD, flex: 1 },
-    avatar: { width: 46, height: 46, borderRadius: 23, justifyContent: 'center', alignItems: 'center' },
+    avatar: { width: 46, height: 46, borderRadius: 23, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+    avatarImage: { width: 46, height: 46, borderRadius: 23 },
     avatarText: { color: '#fff', fontWeight: '700', fontSize: 18 },
     customerName: { fontSize: 16, fontWeight: '700', color: COLORS.TEXT_HEADING },
     customerId: { fontSize: 12, color: COLORS.TEXT_DIM },

@@ -46,10 +46,20 @@ const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
 
     return (
         <View style={styles.container}>
+            {/* Back Button */}
+            {navigation && (
+                <View style={styles.backBar}>
+                    <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+                        <Text style={styles.backBtnText}>← Back</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.backBarTitle}>AI Scanner</Text>
+                    <View style={{ width: 70 }} />
+                </View>
+            )}
             {/* Camera Preview */}
             <View style={styles.preview}>
                 {/* TODO: Replace with <Camera> component after installing vision-camera */}
-                <Text style={styles.cameraIcon}>\ud83d\udcf7</Text>
+                <Text style={styles.cameraIcon}>📷</Text>
                 <Text style={styles.scanText}>Camera Preview</Text>
                 <Text style={styles.subText}>
                     Install react-native-vision-camera for live scanning
@@ -60,9 +70,9 @@ const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
             {/* Result Card */}
             {lastResult && (
                 <View style={styles.resultCard}>
-                    <Text style={styles.resultTitle}>\u2705 Found: {lastResult.name}</Text>
+                    <Text style={styles.resultTitle}>✅ Found: {lastResult.name}</Text>
                     <Text style={styles.resultSub}>
-                        {lastResult.category} · \u20b9{lastResult.price} / {lastResult.unit}
+                        {lastResult.category} · ₹{lastResult.price} / {lastResult.unit}
                     </Text>
                     <View style={styles.actionRow}>
                         <TouchableOpacity style={styles.retryBtn} onPress={handleScan}>
@@ -78,7 +88,7 @@ const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
             {/* Scan Button */}
             {!isScanning && !lastResult && (
                 <TouchableOpacity style={styles.scanBtn} onPress={handleScan}>
-                    <Text style={styles.scanBtnText}>\ud83d\udcf8 TAP TO SCAN</Text>
+                    <Text style={styles.scanBtnText}>📸 TAP TO SCAN</Text>
                 </TouchableOpacity>
             )}
 
@@ -94,6 +104,10 @@ const ScanScreen = ({ navigation, onProductAdded }: ScanScreenProps) => {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#000' },
+    backBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: COLORS.WHITE, paddingHorizontal: SPACING.MD, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: COLORS.BORDER },
+    backBtn: { flexDirection: 'row', alignItems: 'center', paddingVertical: 4, paddingHorizontal: 8, borderRadius: RADIUS.MD, backgroundColor: COLORS.BACKGROUND },
+    backBtnText: { color: COLORS.PRIMARY, fontWeight: '700', fontSize: 15 },
+    backBarTitle: { fontSize: 16, fontWeight: '700', color: COLORS.TEXT_HEADING },
     preview: {
         flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#111',
     },

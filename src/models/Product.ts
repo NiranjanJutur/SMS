@@ -8,6 +8,7 @@ export interface Product {
     currentStock: number;
     minThreshold: number;
     unit: string;
+    packSize?: number;         // how many base-unit items are in 1 container (e.g. 12 pcs/box, 25 kg/bag)
     supplierId: string;
     supplierPhone: string;
     purchasePrice: number;
